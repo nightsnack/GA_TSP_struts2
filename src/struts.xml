@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<constant name="struts.action.extension" value="action,do,"/>
+	<constant name="struts.configuration.xml.reload" value="true"></constant>
+
+    <package name="default" namespace="/" extends="struts-default">
+    	<interceptors>
+    		<interceptor name="loadInterceptor" class="org.nightsnack.interceptor.LoadInterceptor"/>
+
+			<interceptor-stack name="myStack">
+				<interceptor-ref name="defaultStack"/>
+				<interceptor-ref name="loadInterceptor"/>
+			</interceptor-stack>    	
+
+    	</interceptors>
+   	
+    	<!-- 基于通配符的方式 -->
+    	<action name="*_*" class="org.nightsnack.action.{1}Action" method="{2}">
+    	<!-- 在action中引入相应的拦截器,如果在action中引入了相应的拦截器之后，
+    	原有的继承于struts-default.xml的拦截器就不起作用了，此时需要手动引入 -->
+    		<interceptor-ref name="myStack"/>
+    		<result>/WEB-INF/{1}/{2}.jsp</result>
+    		<result name="input">/WEB-INF/{1}/{2}Input.jsp</result>
+    		<result type="redirect" name="r_list">/{1}_list.action</result>
+    	</action>
+    </package>
+</struts>
